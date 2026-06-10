@@ -2,6 +2,8 @@
 
 import express from "express";
 import passport from "passport";
+import jwt from "jsonwebtoken";
+
 
 import {
     registerUser,
@@ -28,10 +30,29 @@ router.get(
 router.get(
     "/google/callback",
     passport.authenticate("google", {
-        failureRedirect: "/login",
+        failureRedirect: "http://localhost:5173/login",
+        session: false,
     }),
     (req, res) => {
-        res.redirect("http://localhost:5173");
+        try {
+            const token = jwt.sign(
+                {
+                    id: req.user._id,
+                    email: req.user.email,
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: "7d" }
+            );
+
+            console.log("JWT Generated:", token);
+
+            return res.redirect(
+                `http://localhost:5173/google-success?token=${token}`
+            );
+        } catch (err) {
+            console.log("Callback Error:", err);
+            return res.redirect("http://localhost:5173/login");
+        }
     }
 );
 

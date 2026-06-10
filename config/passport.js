@@ -24,9 +24,13 @@ passport.use(
             done
         ) => {
             try {
+                console.log("Google Profile:", profile);
+
                 let user = await User.findOne({
                     googleId: profile.id,
                 });
+
+                console.log("Existing User:", user);
 
                 if (!user) {
                     user = await User.create({
@@ -35,11 +39,12 @@ passport.use(
                         email:
                             profile.emails?.[0]?.value,
                     });
+                    console.log("New User Created:", user);
                 }
 
                 return done(null, user);
             } catch (error) {
-                console.error(error);
+                console.error("Google Auth Error:",error);
                 return done(error, null);
             }
         }
