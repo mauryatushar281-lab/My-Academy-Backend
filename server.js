@@ -12,6 +12,8 @@ import authRoutes from "./routes/authRoutes.js";
 import "./config/passport.js"; // IMPORTANT
 import learningRoutes from "./routes/learningRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+
 
 
 
@@ -64,6 +66,7 @@ app.use(
     "/api/learning",
     learningRoutes
 );
+app.use("/api/users", userRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

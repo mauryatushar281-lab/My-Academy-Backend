@@ -1,14 +1,13 @@
-// routes/authRoutes.js
 
 import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 
-
 import {
     registerUser,
     loginUser,
 } from "../controllers/authController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -44,6 +43,16 @@ router.get(
                 { expiresIn: "7d" }
             );
 
+            const user = encodeURIComponent(
+                JSON.stringify({
+                    id: req.user._id,
+                    name: req.user.name,
+                    email: req.user.email,
+                    role: req.user.role,
+                    photo: req.user.photo,
+                })
+            );
+
             console.log("JWT Generated:", token);
 
             return res.redirect(
@@ -55,6 +64,10 @@ router.get(
         }
     }
 );
+
+router.get("/me", authMiddleware, async (req, res) => {
+    res.json(req.user);
+});
 
 export default router;
 

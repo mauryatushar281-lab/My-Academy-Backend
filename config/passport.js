@@ -26,8 +26,11 @@ passport.use(
             try {
                 console.log("Google Profile:", profile);
 
+                // let user = await User.findOne({
+                //     googleId: profile.id,
+                // });
                 let user = await User.findOne({
-                    googleId: profile.id,
+                    email: profile.emails?.[0]?.value,
                 });
 
                 console.log("Existing User:", user);
@@ -36,15 +39,19 @@ passport.use(
                     user = await User.create({
                         googleId: profile.id,
                         name: profile.displayName,
-                        email:
-                            profile.emails?.[0]?.value,
+                        email: profile.emails?.[0]?.value,
+                        photo: profile.photos?.[0]?.value,
                     });
                     console.log("New User Created:", user);
+                } else if (!user.googleId) {
+                    user.googleId = profile.id;
+                    user.photo = profile.photos?.[0]?.value;
+                    await user.save();
                 }
 
                 return done(null, user);
             } catch (error) {
-                console.error("Google Auth Error:",error);
+                console.error("Google Auth Error:", error);
                 return done(error, null);
             }
         }
