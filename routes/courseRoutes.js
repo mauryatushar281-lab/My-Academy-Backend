@@ -1,16 +1,13 @@
 import express from "express";
 import Course from "../models/Course.js";
+import { createCourse, AddLectures } from "../controllers/courseController.js";
 
 const router = express.Router();
 
 // POST COURSE
-router.post("/create", async (req, res) => {
-    try {
-        const course = await Course.create(req.body);
-        res.json(course);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+router.post("/create", createCourse);
+
+/* ADD LECTURE */
+router.post("/add-lecture/:courseId", AddLectures);
 
 export default router;

@@ -13,7 +13,8 @@ import "./config/passport.js"; // IMPORTANT
 import learningRoutes from "./routes/learningRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
+import videoRoutes from "./routes/videoRoutes.js";
+import progressRoutes from "./routes/progressRoutes.js";
 
 
 
@@ -58,6 +59,8 @@ app.use(passport.session());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/videos", videoRoutes);
+app.use("/api/progress", progressRoutes);
 // Test Route
 app.get("/", (req, res) => {
     res.send("MyAcademy API Running");
