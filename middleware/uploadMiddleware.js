@@ -8,7 +8,13 @@ const storage = new CloudinaryStorage({
     params: {
         folder: "my-academy-profiles",
         allowed_formats: ["jpg", "png", "jpeg"],
-    },
+
+        public_id: (req, file) => {
+            return req.user.id;
+        },
+
+        overwrite: true
+    }
 });
 
 const upload = multer({
