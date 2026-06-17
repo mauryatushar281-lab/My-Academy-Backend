@@ -15,7 +15,8 @@ import courseRoutes from "./routes/courseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import videoRoutes from "./routes/videoRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
-
+import enrollmentRoutes from "./routes/enrollmentRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 
 const app = express();
@@ -61,6 +62,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/progress", progressRoutes);
+app.use(
+    "/api/enrollment",
+    enrollmentRoutes
+);
 // Test Route
 app.get("/", (req, res) => {
     res.send("MyAcademy API Running");
@@ -70,6 +75,10 @@ app.use(
     learningRoutes
 );
 app.use("/api/users", userRoutes);
+app.use(
+    "/api/contact",
+    contactRoutes
+);
 
 // Server
 const PORT = process.env.PORT || 5000;

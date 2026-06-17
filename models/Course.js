@@ -22,17 +22,55 @@ const lessonSchema = new mongoose.Schema({
     },
 });
 
+
 const courseSchema = new mongoose.Schema(
     {
-        title: String,
+        title: {
+            type: String,
+            required: true
+        },
 
-        description: String,
+        thumbnail: {
+            type: String,
+            default: ""
+        },
 
-        thumbnail: String,
+        instructor: {
+            type: String,
+            default: ""
+        },
 
-        lessons: [lessonSchema],
+
+        duration: {
+            type: String,
+            default: ""
+        },
+
+
+        price: {
+            type: Number,
+            default: 0
+        }
+
     },
-    { timestamps: true }
+    {
+        timestamps: true
+    }
 );
+
+
+
+// const courseSchema = new mongoose.Schema(
+//     {
+//         title: String,
+
+//         description: String,
+
+//         thumbnail: String,
+
+//         lessons: [lessonSchema],
+//     },
+//     { timestamps: true }
+// );
 
 export default mongoose.model("Course", courseSchema);
