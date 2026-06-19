@@ -1,25 +1,44 @@
 import User from "../models/User.js";
+import Enrollment from "../models/Enrollment.js";
 import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
 import cloudinary from "../config/cloudinary.js";
 
 export const getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
+        // here for enrollment
+        const enrollments = await Enrollment.find({
+            userId: user._id,
+            paymentStatus: "success"
+        })
+            .populate("courseId");
+        const courses = enrollments.map((item) => ({
+            _id: item.courseId._id,
+            title: item.courseId.title,
+            description: item.courseId.description,
+            progress:
+                item.completedLessons.length > 0
+                    ? 20
+                    : 0
+        }));
 
+        // console.log("ENROLLMENTS:", enrollments);
+        // console.log("Courses:", courses);
+
+        // here enrollment end 
         res.json({
             name: user.name,
             email: user.email,
             phone: user.phone,
             photo: user.photo,
-
+            courses: courses,
             enrolledCourses: user.enrolledCourses || 0,
             certificates: user.certificates || 0,
             progress: user.progress || 0,
             learningHours: user.learningHours || 0,
 
-            courses: user.courses || [],
+            // courses: user.courses || [],
             activities: user.activities || [],
-
             createdAt: user.createdAt,
         });
 
