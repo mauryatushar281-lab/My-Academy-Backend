@@ -10,7 +10,8 @@ export const createCourse = async (req, res) => {
             thumbnail,
             instructor,
             duration,
-            price
+            price,
+            category
         } = req.body;
 
 
@@ -77,11 +78,63 @@ export const getCourses = async (req, res) => {
 
 };
 // here for update cousrse 
+
+
 export const updateCourse = async (req, res) => {
+    try {
+        const course = await Course.findById(
+            req.params.id
+        );
+        if (!course) {
+            return res.status(404).json({
+                message: "Course not found"
+            });
+        }
+        course.title =
+            req.body.title ?? course.title;
+        course.description =
+            req.body.description ?? course.description;
+        course.thumbnail =
+            req.body.thumbnail ?? course.thumbnail;
+
+
+        course.category =
+            req.body.category ?? course.category;
+        // category
+        course.instructor =
+            req.body.instructor ?? course.instructor;
+        course.duration =
+            req.body.duration ?? course.duration;
+        course.price =
+            req.body.price ?? course.price;
+        course.lessons =
+            req.body.lessons ?? course.lessons;
+        const updatedCourse = await course.save();
+        res.status(200).json({
+            success: true,
+            message: "Course Updated",
+            course: updatedCourse
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+
+};
+
+
+
+// here for delete course 
+
+export const deleteCourse = async (req, res) => {
 
     try {
 
-        const course = await Course.findById(
+
+        const course = await Course.findByIdAndDelete(
             req.params.id
         );
 
@@ -95,39 +148,17 @@ export const updateCourse = async (req, res) => {
         }
 
 
-        course.title =
-            req.body.title || course.title;
-
-
-        course.thumbnail =
-            req.body.thumbnail || course.thumbnail;
-
-
-        course.instructor =
-            req.body.instructor || course.instructor;
-
-
-        course.duration =
-            req.body.duration || course.duration;
-
-
-        course.price =
-            req.body.price || course.price;
-
-
-
-        await course.save();
-
-
         res.json({
+
             success: true,
-            message: "Course Updated",
-            course
+
+            message: "Course deleted"
+
         });
 
 
-
-    } catch (error) {
+    }
+    catch (error) {
 
         res.status(500).json({
             message: error.message
@@ -136,6 +167,65 @@ export const updateCourse = async (req, res) => {
     }
 
 };
+// export const updateCourse = async (req, res) => {
+
+//     try {
+
+//         const course = await Course.findById(
+//             req.params.id
+//         );
+
+
+//         if (!course) {
+
+//             return res.status(404).json({
+//                 message: "Course not found"
+//             });
+
+//         }
+
+
+//         course.title =
+//             req.body.title || course.title;
+
+
+//         course.thumbnail =
+//             req.body.thumbnail || course.thumbnail;
+
+
+//         course.instructor =
+//             req.body.instructor || course.instructor;
+
+
+//         course.duration =
+//             req.body.duration || course.duration;
+
+
+//         course.price =
+//             req.body.price || course.price;
+
+
+
+//         await course.save();
+
+
+//         res.json({
+//             success: true,
+//             message: "Course Updated",
+//             course
+//         });
+
+
+
+//     } catch (error) {
+
+//         res.status(500).json({
+//             message: error.message
+//         });
+
+//     }
+
+// };
 
 
 // // CREATE COURSE
