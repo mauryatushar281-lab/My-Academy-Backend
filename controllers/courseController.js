@@ -46,6 +46,12 @@ export const AddLectures = async (req, res) => {
 
         const course = await Course.findById(courseId);
 
+        if (!course) {
+            return res.status(404).json({
+                message: "Course not found"
+            });
+        }
+
         course.lectures.push(req.body);
 
         await course.save();

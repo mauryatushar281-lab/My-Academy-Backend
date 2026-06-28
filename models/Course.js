@@ -17,6 +17,10 @@ const lessonSchema = new mongoose.Schema(
         duration: {
             type: String,
             default: "10 min"
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
         }
     },
     {

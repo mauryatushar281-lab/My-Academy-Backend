@@ -1,4 +1,5 @@
 import express from "express";
+import User from "../models/User.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
 import {
@@ -6,13 +7,34 @@ import {
     updateProfile,
 } from "../controllers/userController.js";
 
+
 const router = express.Router();
+
+
+// GET ALL STUDENTS
+router.get("/students", async (req, res) => {
+    try {
+        const students = await User.find({
+            role: "student"
+        })
+            .select("-password");
+        res.json(students);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
+});
+
 
 router.get(
     "/profile",
     authMiddleware,
     getProfile
 );
+
 
 router.put(
     "/profile",
