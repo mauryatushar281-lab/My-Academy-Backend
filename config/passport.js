@@ -4,8 +4,8 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User.js";
 
 console.log("Passport Config Loaded");
-console.log("CLIENT ID:", process.env.GOOGLE_CLIENT_ID);
-console.log("CLIENT SECRET:", process.env.GOOGLE_CLIENT_SECRET);
+// console.log("CLIENT ID:", process.env.GOOGLE_CLIENT_ID);
+// console.log("CLIENT SECRET:", process.env.GOOGLE_CLIENT_SECRET);
 
 passport.use(
     new GoogleStrategy(

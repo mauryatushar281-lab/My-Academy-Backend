@@ -55,6 +55,7 @@ export const registerUser = async (
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log("LOGIN BODY:", req.body);
 
         const user = await User.findOne({ email });
 
@@ -68,6 +69,10 @@ export const loginUser = async (req, res) => {
             password,
             user.password
         );
+
+        console.log("PASSWORD FROM FRONTEND:", password);
+        console.log("HASH FROM DATABASE:", user.password);
+        console.log("PASSWORD MATCH:", match);
 
         if (!match) {
             return res.status(400).json({
@@ -106,36 +111,36 @@ export const loginUser = async (req, res) => {
 
 /* GOOGLE CALLBACK (IMPORTANT PART) */
 export const googleCallback = (req, res) => {
-        try {
-            const token = jwt.sign(
-                {
-                    id: req.user._id,
-                    email: req.user.email,
-                },
-                process.env.JWT_SECRET,
-                { expiresIn: "7d" }
-            );
+    try {
+        const token = jwt.sign(
+            {
+                id: req.user._id,
+                email: req.user.email,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
-            const user = encodeURIComponent(
-                JSON.stringify({
-                    id: req.user._id,
-                    name: req.user.name,
-                    email: req.user.email,
-                    role: req.user.role,
-                    photo: req.user.photo,
-                })
-            );
+        const user = encodeURIComponent(
+            JSON.stringify({
+                id: req.user._id,
+                name: req.user.name,
+                email: req.user.email,
+                role: req.user.role,
+                photo: req.user.photo,
+            })
+        );
 
-            console.log("JWT Generated:", token);
+        console.log("JWT Generated:", token);
 
-            return res.redirect(
-                `http://localhost:5173/google-success?token=${token}`
-            );
-        } catch (err) {
-            console.log("Callback Error:", err);
-            return res.redirect("http://localhost:5173/login");
-        }
-    };
+        return res.redirect(
+            `http://localhost:5173/google-success?token=${token}`
+        );
+    } catch (err) {
+        console.log("Callback Error:", err);
+        return res.redirect("http://localhost:5173/login");
+    }
+};
 
 
 /* GET PROFILE */

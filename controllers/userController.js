@@ -1,7 +1,12 @@
+
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 import Enrollment from "../models/Enrollment.js";
 import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
 import cloudinary from "../config/cloudinary.js";
+import crypto from "crypto";
+import transporter from "../config/mail.js";
+
 
 export const getProfile = async (req, res) => {
     try {
@@ -93,6 +98,117 @@ export const updateProfile = async (req, res) => {
             message: error.message
         });
 
+    }
+};
+// here for forgot password
+export const forgotPassword = async (req, res) => {
+
+
+    try {
+        const { email, phone } = req.body;
+        const user = await User.findOne({
+            $or: [
+                { email: email },
+                { phone: phone }
+            ]
+        });
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+        const token =
+            crypto.randomBytes(32)
+                .toString("hex");
+        user.resetToken = token;
+        user.resetTokenExpire =
+            Date.now() + 15 * 60 * 1000;
+        await user.save();
+        console.log("TOKEN SAVED IN DATABASE:");
+        console.log(user.resetToken);
+        // create link
+        const resetURL =
+            `http://localhost:5173/reset-password/${token}`;
+        console.log(
+            "RESET LINK:",
+            resetURL
+        );
+
+        // here for send email
+        //     await transporter.sendMail({
+        //         from: process.env.EMAIL_USER,
+        //         to: user.email,
+        //         subject: "My Academy Password Reset",
+        //         html: `
+        // <h2>Password Reset Request</h2>
+        // <p>Hello ${user.name},</p>
+        // <p>Click below to reset your password:</p>
+        // <a href="${resetURL}">
+        //     Reset Password
+        // </a>
+        // <p>This link expires in 15 minutes.</p>
+        // `
+        //     });
+        // here end 
+        res.json({
+            message:
+                "Reset link generated",
+            resetURL
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Server error"
+        });
+    }
+}
+
+export const resetPassword = async (req, res) => {
+
+    try {
+
+        const { token, password } = req.body;
+        console.log("TOKEN FROM FRONTEND:");
+        console.log(token);
+        const user = await User.findOne({
+            resetToken: token,
+            // resetTokenExpire: {
+            //     $gt: Date.now()
+            // }
+        });
+        console.log("USER FOUND:");
+        console.log(user);
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Reset link expired or invalid"
+            });
+        }
+
+        if (user.resetTokenExpire < Date.now()) {
+            return res.status(400).json({
+                message: "Token expired"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+        user.resetToken = undefined;
+        user.resetTokenExpire = undefined;
+
+        await user.save();
+
+        res.json({
+            message: "Password changed successfully"
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Server error"
+        });
     }
 };
 

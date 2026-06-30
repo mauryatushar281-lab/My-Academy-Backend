@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
       default: "",
 },
 
+
     password: {
       type: String,
       required: function () {
@@ -60,6 +61,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "student",
     },
+    resetToken:{
+    type:String,
+    default:null
+},
+
+resetTokenExpire:{
+    type:Date,
+    default:null
+},
   },
   {
     timestamps: true,

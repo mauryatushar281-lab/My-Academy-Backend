@@ -5,6 +5,8 @@ import upload from "../middleware/uploadMiddleware.js";
 import {
     getProfile,
     updateProfile,
+    forgotPassword,
+    resetPassword,
 } from "../controllers/userController.js";
 
 
@@ -41,6 +43,14 @@ router.put(
     authMiddleware,
     upload.single("photo"),
     updateProfile
+);
+router.post(
+    "/forgot-password",
+    forgotPassword
+);
+router.post(
+    "/reset-password",
+    resetPassword
 );
 
 export default router;
